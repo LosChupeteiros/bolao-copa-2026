@@ -74,66 +74,57 @@ export default function BetCard({
   const awayFlagUrl = getFlagUrl(awayLabel);
 
   return (
-    <div
-      className={cn(
-        "bg-[var(--card)] border rounded-2xl overflow-hidden transition-all",
-        locked
-          ? "border-white/5 opacity-70"
-          : saved
-          ? "border-[var(--primary)]/50 shadow-[0_0_0_1px_rgba(0,156,59,0.12)]"
-          : "border-[var(--card-border)]"
-      )}
-    >
-      {/* Match section */}
-      <div className="flex items-center gap-3 px-5 pt-6 pb-3">
+    <div className={cn(
+      "rounded-2xl overflow-hidden transition-all",
+      locked
+        ? "bg-[var(--card)] border border-white/5 opacity-60"
+        : saved
+        ? "bg-[var(--card)] border border-[var(--primary)]/35 shadow-[0_0_0_1px_rgba(0,181,69,0.10)]"
+        : "bg-[var(--card)] border border-[var(--card-border)]"
+    )}>
 
-        {/* Home team */}
-        <div className="flex-1 min-w-0">
-          {homeFlagUrl ? (
-            <img
-              src={homeFlagUrl}
-              alt={homeLabel}
-              className="flag-img w-12 h-[32px] mb-2.5"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-12 h-[32px] bg-white/5 rounded mb-2.5" />
-          )}
-          <p className="text-[14px] font-black text-white leading-snug break-words">
-            {homeLabel}
-          </p>
+      {/* Top accent bar */}
+      <div className={cn(
+        "h-[3px]",
+        saved ? "bg-gradient-to-r from-[var(--primary)]/0 via-[var(--primary)] to-[var(--primary)]/0"
+             : locked ? "bg-white/4"
+             : "bg-white/4"
+      )} />
+
+      {/* Match section */}
+      <div className="flex items-center gap-3 px-5 pt-5 pb-3">
+
+        {/* Home */}
+        <div className="flex-1 min-w-0 flex flex-col gap-2">
+          {homeFlagUrl
+            ? <img src={homeFlagUrl} alt={homeLabel} className="flag-img w-12 h-[32px]" loading="lazy" />
+            : <div className="w-12 h-[32px] rounded bg-white/5" />
+          }
+          <p className="text-[13px] font-black text-white leading-snug break-words">{homeLabel}</p>
         </div>
 
-        {/* Score area */}
-        <div className="flex items-center gap-2.5 flex-shrink-0">
+        {/* Score */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           {locked || saved ? (
             <>
               <ScoreBox value={homeScore} active={!locked && saved} />
-              <span className="text-white/20 text-base">×</span>
+              <span className="text-white/15 text-lg font-black">—</span>
               <ScoreBox value={awayScore} active={!locked && saved} />
             </>
           ) : (
             <>
               <input
                 ref={homeRef}
-                type="number"
-                min={0}
-                max={20}
-                inputMode="numeric"
-                pattern="[0-9]*"
+                type="number" min={0} max={20} inputMode="numeric" pattern="[0-9]*"
                 value={homeScore}
                 onChange={(e) => handleInput(e.target.value, setHomeScore, awayRef)}
                 onFocus={(e) => e.target.select()}
                 className={cn("score-input", isDraw && "invalid")}
               />
-              <span className="text-white/20 text-base">×</span>
+              <span className="text-white/15 text-lg font-black">—</span>
               <input
                 ref={awayRef}
-                type="number"
-                min={0}
-                max={20}
-                inputMode="numeric"
-                pattern="[0-9]*"
+                type="number" min={0} max={20} inputMode="numeric" pattern="[0-9]*"
                 value={awayScore}
                 onChange={(e) => handleInput(e.target.value, setAwayScore)}
                 onFocus={(e) => e.target.select()}
@@ -143,56 +134,47 @@ export default function BetCard({
           )}
         </div>
 
-        {/* Away team */}
-        <div className="flex-1 min-w-0 flex flex-col items-end">
-          {awayFlagUrl ? (
-            <img
-              src={awayFlagUrl}
-              alt={awayLabel}
-              className="flag-img w-12 h-[32px] mb-2.5"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-12 h-[32px] bg-white/5 rounded mb-2.5" />
-          )}
-          <p className="text-[14px] font-black text-white leading-snug text-right break-words">
-            {awayLabel}
-          </p>
+        {/* Away */}
+        <div className="flex-1 min-w-0 flex flex-col items-end gap-2">
+          {awayFlagUrl
+            ? <img src={awayFlagUrl} alt={awayLabel} className="flag-img w-12 h-[32px]" loading="lazy" />
+            : <div className="w-12 h-[32px] rounded bg-white/5" />
+          }
+          <p className="text-[13px] font-black text-white leading-snug text-right break-words">{awayLabel}</p>
         </div>
       </div>
 
-      {/* Meta row: date + locked indicator */}
+      {/* Meta row */}
       <div className="flex items-center justify-between px-5 pb-4">
-        <span className="text-white/20 text-[11px]">{match.date}</span>
+        <span className="text-[var(--text-dim)] text-[10px] font-medium">{match.date}</span>
         <div className="flex items-center gap-1.5">
           {locked && (
-            <span className="flex items-center gap-1 text-white/20 text-[11px]">
+            <span className="flex items-center gap-1 text-[var(--text-dim)] text-[10px]">
               <Lock size={9} /> encerrado
             </span>
           )}
-          {!locked && !saved && (
-            <span className="text-white/15 text-[11px]">{currentIndex + 1}/{totalMatches}</span>
-          )}
-          {saved && !locked && (
-            <span className="flex items-center gap-1 text-[var(--primary)]/60 text-[11px] font-medium">
+          {!locked && saved && (
+            <span className="flex items-center gap-1 text-[var(--primary)] text-[10px] font-bold">
               <Check size={9} strokeWidth={3} /> apostado
             </span>
+          )}
+          {!locked && !saved && (
+            <span className="text-[var(--text-dim)] text-[10px]">{currentIndex + 1}/{totalMatches}</span>
           )}
         </div>
       </div>
 
-      {/* Footer: action */}
+      {/* Action */}
       <div className="px-5 pb-5">
         {locked ? null : saved ? (
-          <div className="flex items-center gap-2">
-            <div className="flex-1 flex items-center justify-center gap-2 text-[var(--primary)] text-sm font-bold py-3 rounded-full bg-[var(--primary)]/8 border border-[var(--primary)]/20">
-              <Check size={14} strokeWidth={3} />
-              Palpite confirmado
+          <div className="flex gap-2">
+            <div className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full bg-[var(--primary)]/8 border border-[var(--primary)]/20 text-[var(--primary)] text-[13px] font-bold">
+              <Check size={13} strokeWidth={3} /> Palpite confirmado
             </div>
             <button
               onClick={() => { setSaved(false); setApiError(""); }}
-              className="w-11 h-11 flex items-center justify-center text-white/25 hover:text-white/60 transition-colors rounded-full border border-white/8 hover:border-white/20"
-              title="Editar palpite"
+              className="w-12 h-12 flex items-center justify-center rounded-full border border-[var(--card-border)] text-[var(--text-dim)] hover:text-white hover:border-white/15 transition-all"
+              title="Editar"
             >
               <Pencil size={13} />
             </button>
@@ -200,31 +182,29 @@ export default function BetCard({
         ) : (
           <>
             {isDraw && (
-              <p className="text-amber-400/90 text-xs text-center mb-3 font-medium">
-                Copa eliminatória não tem empate — escolha um vencedor
+              <p className="text-amber-400 text-[12px] text-center mb-3 font-medium">
+                Eliminatória não tem empate — escolha um vencedor
               </p>
             )}
             {apiError && (
-              <p className="text-red-400 text-xs text-center mb-3">{apiError}</p>
+              <p className="text-red-400 text-[12px] text-center mb-3">{apiError}</p>
             )}
             <button
               onClick={handleConfirm}
               disabled={saving || isDraw}
               className={cn(
-                "w-full font-black py-4 rounded-full transition-all text-sm flex items-center justify-center gap-2",
+                "w-full font-black py-4 rounded-full text-[14px] flex items-center justify-center gap-2 transition-all",
                 isDraw
-                  ? "bg-white/4 text-white/20 cursor-not-allowed"
-                  : "bg-[var(--primary)] hover:bg-[var(--primary-dark)] active:scale-[0.98] text-white shadow-[0_4px_16px_rgba(0,156,59,0.25)]"
+                  ? "bg-white/4 text-white/15 cursor-not-allowed"
+                  : saving
+                  ? "bg-[var(--primary)]/70 text-white"
+                  : "bg-[var(--primary)] text-white shadow-[0_4px_20px_rgba(0,181,69,0.30)] active:scale-[0.98]"
               )}
             >
-              {saving ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <Check size={15} strokeWidth={3} />
-                  Confirmar Palpite
-                </>
-              )}
+              {saving
+                ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                : <><Check size={15} strokeWidth={3} /> Confirmar Palpite</>
+              }
             </button>
           </>
         )}
@@ -235,14 +215,12 @@ export default function BetCard({
 
 function ScoreBox({ value, active }: { value: number; active: boolean }) {
   return (
-    <div
-      className={cn(
-        "w-14 h-14 flex items-center justify-center rounded-2xl text-2xl font-black border",
-        active
-          ? "text-white border-[var(--primary)]/40 bg-[var(--primary)]/8"
-          : "text-white/35 border-white/8 bg-white/3"
-      )}
-    >
+    <div className={cn(
+      "w-[3.75rem] h-[3.75rem] flex items-center justify-center rounded-[0.875rem] text-[2rem] font-black font-variant-numeric border-2",
+      active
+        ? "bg-black/40 text-white border-[var(--primary)]/30"
+        : "bg-black/25 text-white/30 border-white/6"
+    )}>
       {value}
     </div>
   );

@@ -12,6 +12,11 @@ import { cn } from "@/lib/utils";
 
 interface CurrentUser { id: string; name: string; displayName: string; }
 
+const PODIUM_BG = [
+  "bg-gradient-to-r from-[rgba(255,215,0,0.10)] to-transparent border-[rgba(255,215,0,0.22)]",
+  "bg-gradient-to-r from-[rgba(176,190,197,0.08)] to-transparent border-[rgba(176,190,197,0.18)]",
+  "bg-gradient-to-r from-[rgba(192,120,64,0.08)] to-transparent border-[rgba(192,120,64,0.18)]",
+];
 const MEDALS = ["🥇", "🥈", "🥉"];
 const PRIZE_LABELS = ["R$ 300", "R$ 200", "R$ 100"];
 const PRIZE_COLORS = ["var(--gold)", "var(--silver)", "var(--bronze)"];
@@ -31,36 +36,31 @@ export default function PlacarPage() {
       setCurrentUser(meData.user);
       const scoresData = await scoresRes.json() as { scores: UserScore[] };
       setScores(scoresData.scores || []);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    } finally { setLoading(false); setRefreshing(false); }
   }
 
   useEffect(() => { void loadData(); }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-copa flex items-center justify-center">
-        <div className="text-4xl animate-bounce">🏆</div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen bg-copa flex items-center justify-center">
+      <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="text-5xl">🏆</motion.div>
+    </div>
+  );
 
   return (
     <AppShell
       header={
-        <header className="sticky top-0 z-40 bg-[var(--bg-mid)]/97 backdrop-blur-md">
+        <header className="sticky top-0 z-40 bg-[var(--bg-mid)]/96 backdrop-blur-md">
           <div className="color-strip" />
           <div className="max-w-lg mx-auto px-5 py-4 flex items-center justify-between">
             <div>
-              <h1 className="text-white font-black text-lg leading-none">Placar Geral</h1>
-              <p className="text-white/30 text-xs mt-1">Copa do Mundo 2026</p>
+              <h1 className="text-white font-black text-xl leading-none">Placar Geral</h1>
+              <p className="text-[var(--text-sub)] text-xs mt-1">Copa do Mundo 2026</p>
             </div>
             <button
               onClick={() => { setRefreshing(true); void loadData(); }}
               disabled={refreshing}
-              className="w-9 h-9 flex items-center justify-center text-white/30 hover:text-white/60 transition-colors rounded-full hover:bg-white/6"
+              className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--text-dim)] hover:text-white hover:bg-white/6 transition-all"
             >
               <RefreshCw size={16} className={cn(refreshing && "animate-spin")} />
             </button>
@@ -72,128 +72,106 @@ export default function PlacarPage() {
       <div className="max-w-lg mx-auto px-4 pt-5">
 
         {/* Prize banner */}
-        <div className="mb-5 rounded-2xl overflow-hidden border border-white/8 bg-[var(--card)]">
-          <div className="flex items-center gap-2 px-5 py-3 border-b border-white/6">
-            <span className="text-[var(--secondary)] text-xs font-black tracking-widest uppercase">🏆 Premiação</span>
-          </div>
-          <div className="grid grid-cols-3 divide-x divide-white/5">
+        <div className="mb-5 rounded-2xl overflow-hidden border border-white/7 bg-[var(--card)]">
+          <div className="flex items-stretch">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="flex flex-col items-center py-4 gap-1">
+              <div key={i} className={cn("flex-1 flex flex-col items-center py-4 gap-1.5", i > 0 && "border-l border-white/7")}>
                 <span className="text-2xl">{MEDALS[i]}</span>
                 <span className="font-black text-base" style={{ color: PRIZE_COLORS[i] }}>{PRIZE_LABELS[i]}</span>
-                <span className="text-white/30 text-[10px]">{i + 1}º lugar</span>
+                <span className="text-[var(--text-dim)] text-[10px]">{i + 1}º lugar</span>
               </div>
             ))}
           </div>
-          <div className="px-5 py-2.5 border-t border-white/5">
-            <p className="text-white/25 text-[10px] text-center">
-              Vencedor: 10 pts · Placar exato: 20 pts · Campeão: +50 pts bônus
+          <div className="px-4 py-2.5 border-t border-white/6">
+            <p className="text-[var(--text-dim)] text-[10px] text-center">
+              Vencedor: 10 pts · Exato: 20 pts · Campeão: +50 pts bônus
             </p>
           </div>
         </div>
 
         {/* Leaderboard */}
         {scores.length === 0 ? (
-          <div className="text-center py-20 text-white/30">
+          <div className="text-center py-20 text-[var(--text-dim)]">
             <div className="text-5xl mb-4">👥</div>
-            <p className="text-sm font-semibold">Ninguém fez palpites ainda</p>
+            <p className="text-sm font-semibold">Ninguém apostou ainda</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             {scores.map((score, idx) => {
               const isMe = score.user.id === currentUser?.id;
               const isTop3 = idx < 3;
+              const cardClass = isTop3
+                ? PODIUM_BG[idx]
+                : isMe
+                ? "bg-[var(--primary)]/6 border-[var(--primary)]/25"
+                : "bg-[var(--card)] border-[var(--card-border)]";
 
               return (
                 <motion.div
                   key={score.user.id}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.04 }}
                 >
                   <Link
                     href={`/perfil/${score.user.id}`}
-                    className={cn(
-                      "flex items-center gap-3.5 px-4 py-4 rounded-2xl border transition-colors",
-                      isMe
-                        ? "bg-[var(--primary)]/6 border-[var(--primary)]/30"
-                        : "bg-[var(--card)] border-[var(--card-border)] active:border-[var(--card-border-hover)]"
-                    )}
+                    className={cn("flex items-center gap-3.5 px-4 py-4 rounded-2xl border transition-all", cardClass)}
                   >
                     {/* Rank */}
-                    <div className="w-7 flex-shrink-0 text-center">
-                      {isTop3 ? (
-                        <span className="text-xl leading-none">{MEDALS[idx]}</span>
-                      ) : (
-                        <span className="text-white/30 text-sm font-black">{idx + 1}</span>
-                      )}
+                    <div className="w-7 text-center flex-shrink-0">
+                      {isTop3
+                        ? <span className="text-xl">{MEDALS[idx]}</span>
+                        : <span className="text-[var(--text-dim)] text-sm font-black">{idx + 1}</span>
+                      }
                     </div>
 
-                    {/* Photo */}
-                    <div className="relative flex-shrink-0">
-                      {score.user.photoUrl ? (
-                        <img
-                          src={score.user.photoUrl}
-                          alt={score.user.displayName}
-                          className={cn(
-                            "w-12 h-12 rounded-full object-cover border-2",
-                            isMe ? "border-[var(--primary)]/50 ring-brasil" : "border-white/10"
-                          )}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] flex items-center justify-center font-black text-base">
-                          {score.user.displayName[0]}
-                        </div>
-                      )}
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      {score.user.photoUrl
+                        ? <img src={score.user.photoUrl} alt={score.user.displayName}
+                            className={cn("w-12 h-12 rounded-full object-cover border-2", isMe ? "border-[var(--primary)]/50 ring-brasil" : "border-white/10")} />
+                        : <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] flex items-center justify-center font-black text-base">
+                            {score.user.displayName[0]}
+                          </div>
+                      }
                     </div>
 
-                    {/* Name + badges */}
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-white font-black text-sm truncate max-w-[140px]">
-                          {score.user.displayName}
-                        </span>
-                        {isMe && (
-                          <span className="text-[9px] bg-[var(--primary)]/15 text-[var(--primary)] px-2 py-0.5 rounded-full font-bold flex-shrink-0">
-                            você
-                          </span>
-                        )}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-white font-black text-sm truncate">{score.user.displayName}</span>
+                        {isMe && <span className="text-[9px] bg-[var(--primary)]/15 text-[var(--primary)] px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">você</span>}
                       </div>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className="text-white/30 text-[11px]">{score.betsCount} palpites</span>
+                        <span className="text-[var(--text-dim)] text-[11px]">{score.betsCount} palpites</span>
                         {score.exactScores > 0 && (
-                          <span className="text-[10px] bg-[var(--secondary)]/10 text-[var(--secondary)] px-2 py-0.5 rounded-full font-bold">
+                          <span className="text-[10px] bg-[var(--secondary)]/10 text-[var(--secondary)] px-1.5 py-0.5 rounded-full font-bold">
                             🎯 {score.exactScores}
                           </span>
                         )}
                         {score.championBonus > 0 && (
-                          <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-bold">
-                            🏆 +50
-                          </span>
+                          <span className="text-[10px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded-full font-bold">🏆 +50</span>
                         )}
                       </div>
                     </div>
 
                     {/* Points */}
                     <div className="text-right flex-shrink-0">
-                      <div
-                        className="text-2xl font-black leading-none"
-                        style={{ color: isTop3 ? PRIZE_COLORS[idx] : isMe ? "var(--primary)" : "white" }}
-                      >
+                      <div className="text-2xl font-black leading-none"
+                        style={{ color: isTop3 ? PRIZE_COLORS[idx] : isMe ? "var(--primary)" : "white" }}>
                         {score.totalPoints}
                       </div>
-                      <div className="text-white/30 text-[10px] mt-0.5">pts</div>
+                      <div className="text-[var(--text-dim)] text-[10px] mt-0.5">pts</div>
                     </div>
                   </Link>
 
-                  {/* Points breakdown */}
                   {score.totalPoints > 0 && (
-                    <div className="flex gap-1.5 flex-wrap px-1 mt-1.5 mb-0.5">
+                    <div className="flex gap-1.5 flex-wrap px-2 mt-1.5">
                       {(Object.entries(score.pointsByRound) as [string, number][])
                         .filter(([, pts]) => pts > 0)
                         .map(([round, pts]) => (
-                          <span key={round} className="text-[10px] text-white/25 bg-white/4 px-2 py-0.5 rounded-full">
-                            {ROUND_LABELS[round as keyof typeof ROUND_LABELS]}: {pts}
+                          <span key={round} className="text-[10px] text-[var(--text-dim)] bg-white/4 px-2 py-1 rounded-full">
+                            {ROUND_LABELS[round as keyof typeof ROUND_LABELS]}: <span className="text-white/60 font-bold">{pts}</span>
                           </span>
                         ))}
                     </div>
@@ -204,8 +182,8 @@ export default function PlacarPage() {
           </div>
         )}
 
-        <p className="text-center text-white/15 text-[11px] mt-6 mb-2">
-          Toque em um jogador para ver os palpites
+        <p className="text-center text-[var(--text-dim)] text-[11px] mt-6 mb-2">
+          Toque para ver os palpites de cada jogador
         </p>
       </div>
     </AppShell>

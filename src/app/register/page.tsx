@@ -3,7 +3,8 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Camera, UserPlus, X } from "lucide-react";
+import { Camera, UserPlus, Lock, User, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -26,7 +27,6 @@ export default function RegisterPage() {
   async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
@@ -50,12 +50,10 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-
     if (!photo) {
-      setError("Adicione uma foto de perfil para o pessoal te reconhecer 📸");
+      setError("Adicione uma foto para o pessoal te reconhecer 📸");
       return;
     }
-
     setLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
@@ -80,132 +78,122 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-copa flex flex-col">
       <div className="color-strip" />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-5 py-8">
+      <div className="flex-1 flex flex-col px-6 py-10 justify-center">
 
-        <div className="mb-6 text-center">
-          <div className="text-4xl mb-2">⚽</div>
-          <h1 className="text-2xl font-black text-white">
-            Entrar no <span className="text-[var(--secondary)]">Bolão</span>
-          </h1>
-          <p className="text-white/30 text-sm mt-1">Copa do Mundo 2026 🇧🇷</p>
+        {/* Logo compact */}
+        <div className="text-center mb-8">
+          <p className="text-[1.6rem] font-black text-white leading-none">Bolão Copa</p>
+          <p className="text-[1.6rem] font-black text-[var(--secondary)] leading-none">2026 🇧🇷</p>
         </div>
 
-        <div className="w-full max-w-sm bg-[var(--card)] border border-white/8 rounded-2xl overflow-hidden">
-          <div className="px-6 pt-6 pb-4 border-b border-white/6">
-            <h2 className="text-white font-black text-base">Criar sua conta</h2>
-          </div>
-
-          <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
-            {/* Photo upload */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="w-24 h-24 rounded-full border-2 border-dashed border-white/15 hover:border-[var(--primary)] flex items-center justify-center overflow-hidden transition-colors bg-white/3"
-                >
-                  {photoPreview ? (
-                    <img src={photoPreview} alt="Foto" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="flex flex-col items-center gap-1 text-white/25">
-                      <Camera size={24} />
-                      <span className="text-xs font-bold">Foto</span>
-                    </div>
-                  )}
-                </button>
-                {photoPreview && (
-                  <button
-                    type="button"
-                    onClick={() => { setPhoto(""); setPhotoPreview(""); }}
-                    className="absolute -top-1 -right-1 bg-red-500 rounded-full p-1"
-                  >
-                    <X size={10} />
-                  </button>
-                )}
-              </div>
-              <p className="text-white/25 text-xs text-center">
-                Obrigatória — o pessoal precisa te reconhecer!
-              </p>
-              <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
-            </div>
-
-            <div>
-              <label className="text-white/35 text-[10px] font-black uppercase tracking-widest mb-2 block">
-                Seu nome completo
-              </label>
-              <input
-                type="text"
-                value={displayName}
-                onChange={(e) => handleDisplayNameChange(e.target.value)}
-                placeholder="ex: Marcelo Silva"
-                className="w-full bg-white/4 border border-white/8 rounded-xl px-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:border-[var(--primary)]/50 focus:bg-white/6 transition-all text-sm"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-white/35 text-[10px] font-black uppercase tracking-widest mb-2 block">
-                Apelido <span className="normal-case text-white/20 font-normal">(sem espaços)</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value.replace(/\s/g, ""))}
-                placeholder="ex: Marcelo"
-                autoCapitalize="none"
-                autoCorrect="off"
-                className="w-full bg-white/4 border border-white/8 rounded-xl px-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:border-[var(--primary)]/50 focus:bg-white/6 transition-all text-sm font-mono"
-                required
-              />
-              <p className="text-white/20 text-[11px] mt-1.5">Você usará esse apelido para entrar</p>
-            </div>
-
-            <div>
-              <label className="text-white/35 text-[10px] font-black uppercase tracking-widest mb-2 block">
-                Senha
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="mínimo 4 caracteres"
-                className="w-full bg-white/4 border border-white/8 rounded-xl px-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:border-[var(--primary)]/50 focus:bg-white/6 transition-all text-sm"
-                required
-                minLength={4}
-              />
-            </div>
-
-            {error && (
-              <p className="text-red-400 text-xs bg-red-500/8 border border-red-500/15 rounded-xl px-3 py-2.5">
-                {error}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-1 w-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] disabled:opacity-50 text-white font-black py-4 rounded-full transition-all flex items-center justify-center gap-2 text-sm shadow-[0_4px_16px_rgba(0,156,59,0.3)]"
-            >
-              {loading ? (
-                <span className="animate-spin text-lg">⚽</span>
+        {/* Photo upload — destaque central */}
+        <div className="flex flex-col items-center mb-7">
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="relative group"
+          >
+            <div className={cn(
+              "w-24 h-24 rounded-full flex items-center justify-center overflow-hidden transition-all border-2",
+              photoPreview
+                ? "border-[var(--primary)]/50"
+                : "border-dashed border-white/20 hover:border-[var(--primary)]/50 bg-white/4"
+            )}>
+              {photoPreview ? (
+                <img src={photoPreview} alt="Foto" className="w-full h-full object-cover" />
               ) : (
-                <>
-                  <UserPlus size={16} />
-                  Entrar na bolada!
-                </>
+                <div className="flex flex-col items-center gap-1.5 text-white/30 group-hover:text-white/60 transition-colors">
+                  <Camera size={26} />
+                  <span className="text-[11px] font-bold">Foto</span>
+                </div>
               )}
-            </button>
-          </form>
-
-          <div className="px-6 pb-5 text-center">
-            <p className="text-white/25 text-sm">
-              Já tem conta?{" "}
-              <Link href="/login" className="text-[var(--secondary)] font-black hover:underline">
-                Fazer login
-              </Link>
-            </p>
-          </div>
+            </div>
+            {photoPreview && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setPhoto(""); setPhotoPreview(""); }}
+                className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-md"
+              >
+                <X size={11} />
+              </button>
+            )}
+          </button>
+          <p className="text-white/25 text-[11px] mt-2.5 text-center">
+            {photoPreview ? "Toque para trocar a foto" : "Foto obrigatória — o pessoal precisa te ver!"}
+          </p>
+          <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
         </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" size={17} />
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => handleDisplayNameChange(e.target.value)}
+              placeholder="Nome completo"
+              className="w-full bg-white/7 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
+              required
+            />
+          </div>
+
+          {/* Apelido derivado */}
+          {name && (
+            <div className="flex items-center gap-2 px-1">
+              <p className="text-white/25 text-[11px]">Apelido para login:</p>
+              <p className="text-[var(--secondary)] font-black text-[11px]">{name}</p>
+            </div>
+          )}
+
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" size={17} />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha (mín. 4 caracteres)"
+              className="w-full bg-white/7 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
+              required
+              minLength={4}
+            />
+          </div>
+
+          {error && (
+            <p className="text-red-400 text-[13px] bg-red-500/8 border border-red-500/15 rounded-xl px-4 py-3">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={cn(
+              "w-full mt-3 font-black py-4 rounded-full text-[15px] transition-all flex items-center justify-center gap-2",
+              loading
+                ? "bg-[var(--primary)]/60 text-white/60"
+                : "bg-[var(--primary)] text-white shadow-[0_6px_24px_rgba(0,156,59,0.45)] active:scale-[0.98]"
+            )}
+          >
+            {loading ? (
+              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <UserPlus size={17} />
+                Entrar na bolada!
+              </>
+            )}
+          </button>
+
+          <p className="text-center text-white/30 text-[13px] mt-2">
+            Já tem conta?{" "}
+            <Link href="/login" className="text-[var(--secondary)] font-black">
+              Fazer login
+            </Link>
+          </p>
+        </form>
+
       </div>
     </div>
   );
