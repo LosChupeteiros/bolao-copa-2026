@@ -87,7 +87,7 @@ export default function PlacarPage() {
           </div>
           <div className="flex flex-col gap-2 p-3.5">
             {PRIZES.map(({ place, prize, label, color }) => (
-              <div key={place} className="flex items-center justify-between gap-4 rounded-2xl border border-white/7 bg-white/4 px-4 py-3">
+              <div key={place} className="flex items-center justify-between gap-4 rounded-2xl border border-white/7 bg-white/4 py-3 pl-4 pr-7">
                 <div className="flex min-w-0 items-center gap-3">
                   <div
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-black"
@@ -97,7 +97,7 @@ export default function PlacarPage() {
                   </div>
                   <p className="truncate text-sm font-black text-white">{label}</p>
                 </div>
-                <p className="shrink-0 text-[17px] font-black leading-none" style={{ color }}>{prize}</p>
+                <p className="mr-1 shrink-0 text-[17px] font-black leading-none" style={{ color }}>{prize}</p>
               </div>
             ))}
           </div>
@@ -135,7 +135,7 @@ export default function PlacarPage() {
                   <Link
                     href={`/perfil/${score.user.id}`}
                     className={cn(
-                      "grid grid-cols-[2rem_3rem_minmax(0,1fr)_4.5rem] items-center gap-3 overflow-hidden rounded-2xl border px-4 py-4 pr-6 transition-all active:scale-[0.98]",
+                      "grid grid-cols-[2rem_3rem_minmax(0,1fr)_4.5rem] items-center gap-3 overflow-hidden rounded-2xl border px-4 py-4 pr-8 transition-all active:scale-[0.98]",
                       cardClass
                     )}
                   >
@@ -197,7 +197,7 @@ export default function PlacarPage() {
                     </div>
 
                     {/* Points */}
-                    <div className="justify-self-end rounded-2xl bg-black/18 px-3 py-2 text-center">
+                    <div className="mr-3 justify-self-end rounded-2xl bg-black/18 px-3 py-2 text-center">
                       <div
                         className="whitespace-nowrap text-[14px] font-black leading-none tabular-nums"
                         style={{ color: isTop3 ? PRIZE_COLORS[idx] : isMe ? "var(--primary)" : "white" }}

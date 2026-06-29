@@ -189,8 +189,8 @@ export default function BetCard({
             <p className="mt-4 text-center text-[13px] text-red-400">{apiError}</p>
           )}
 
-          <div className="mx-auto mt-5 w-full max-w-80">
-            <div className="grid grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-3">
+          <div className="mt-5 flex w-full justify-center">
+            <div className="grid w-[20rem] max-w-[calc(100vw-2rem)] grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-3">
               <RoundActionButton
                 onClick={onPrev}
                 disabled={!canPrev}
