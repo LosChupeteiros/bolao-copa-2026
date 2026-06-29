@@ -15,7 +15,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = getUserByName(name);
+    if (/\s/.test(name)) {
+      return NextResponse.json(
+        { error: "O apelido não pode ter espaços" },
+        { status: 400 }
+      );
+    }
+
+    const user = await getUserByName(name);
     if (!user) {
       return NextResponse.json(
         { error: "Apelido ou senha incorretos" },

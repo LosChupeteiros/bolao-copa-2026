@@ -7,22 +7,19 @@ import { isMatchLocked } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/bets?userId=xxx  → bets of a specific user
-// GET /api/bets             → all bets (for admin/view)
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
 
   if (userId) {
-    const bets = getBetsByUser(userId);
+    const bets = await getBetsByUser(userId);
     return NextResponse.json({ bets });
   }
 
-  const bets = getBets();
+  const bets = await getBets();
   return NextResponse.json({ bets });
 }
 
-// POST /api/bets  { matchId, homeScore, awayScore }
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session) {
@@ -76,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    upsertBet({
+    await upsertBet({
       id: uuidv4(),
       userId: session.userId,
       matchId,

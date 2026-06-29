@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const users = getUsers();
+    const users = await getUsers();
 
     if (users.find((u) => u.name.toLowerCase() === name.toLowerCase())) {
       return NextResponse.json(
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     };
 
     users.push(newUser);
-    saveUsers(users);
+    await saveUsers(users);
 
     const token = await createSession({ userId: newUser.id, name: newUser.name });
 

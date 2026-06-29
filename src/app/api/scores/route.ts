@@ -5,9 +5,11 @@ import { calcUserScore } from "@/lib/scoring";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const users = getUsers();
-  const allBets = getBets();
-  const results = getResults();
+  const [users, allBets, results] = await Promise.all([
+    getUsers(),
+    getBets(),
+    getResults(),
+  ]);
 
   const scores = users
     .map((user) => {

@@ -6,12 +6,11 @@ import { MATCHES_BY_ID } from "@/lib/matches";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const results = getResults();
+  const results = await getResults();
   return NextResponse.json({ results });
 }
 
 export async function POST(request: NextRequest) {
-  // Accepts either session-based admin OR admin password header
   const adminPassword = request.headers.get("x-admin-password");
   const envPassword = process.env.ADMIN_PASSWORD || "admin2026copa";
 
@@ -22,7 +21,7 @@ export async function POST(request: NextRequest) {
   } else {
     const session = await getSession();
     if (session) {
-      const user = getUserById(session.userId);
+      const user = await getUserById(session.userId);
       if (user?.isAdmin) isAdmin = true;
     }
   }
@@ -50,12 +49,12 @@ export async function POST(request: NextRequest) {
 
     if (homeScore === awayScore) {
       return NextResponse.json(
-        { error: "Na fase eliminatória não há empate (use pênaltis: adicione 1 ao vencedor)" },
+        { error: "Eliminatória não tem empate (adicione 1 ao vencedor para penaltis)" },
         { status: 400 }
       );
     }
 
-    upsertResult(matchId, homeScore, awayScore);
+    await upsertResult(matchId, homeScore, awayScore);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
