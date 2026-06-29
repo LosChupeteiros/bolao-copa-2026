@@ -9,6 +9,7 @@ import { MATCHES, ROUND_ORDER, ROUND_LABELS, resolveMatchLabels, getFlagUrl } fr
 import type { Bet, Round } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { isMatchLocked } from "@/lib/utils";
+import MobileHeader from "@/components/layout/MobileHeader";
 
 interface ProfileUser { id: string; name: string; displayName: string; photoUrl: string; }
 interface UserScoreData {
@@ -90,29 +91,27 @@ export default function PerfilPage() {
 
   return (
     <div className="min-h-screen bg-copa pb-10">
-      <header className="sticky top-0 z-40 bg-[var(--bg-mid)]/96 backdrop-blur-md">
-        <div className="color-strip" />
-        <div className="max-w-lg mx-auto px-5 py-3.5 flex items-center gap-3">
-          <Link href="/placar" className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--text-dim)] hover:text-white hover:bg-white/6 transition-all flex-shrink-0">
-            <ArrowLeft size={18} />
-          </Link>
-          {profileUser.photoUrl
-            ? <img src={profileUser.photoUrl} alt={profileUser.displayName} className="w-9 h-9 rounded-full object-cover border-2 border-[var(--primary)]/30 flex-shrink-0" />
-            : <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] flex items-center justify-center font-black text-sm flex-shrink-0">{profileUser.displayName[0]}</div>
-          }
-          <div className="flex-1 min-w-0">
-            <p className="text-white font-black text-[15px] leading-none truncate">{profileUser.displayName}</p>
-            <p className="text-[var(--text-dim)] text-[11px] mt-0.5">palpites da Copa 2026</p>
+      <MobileHeader
+        leading={
+          <div className="flex items-center gap-2">
+            <Link href="/placar" className="icon-button" aria-label="Voltar para o placar">
+              <ArrowLeft size={18} />
+            </Link>
+            {profileUser.photoUrl
+              ? <img src={profileUser.photoUrl} alt={profileUser.displayName} className="h-11 w-11 rounded-full object-cover border-2 border-[var(--primary)]/35" />
+              : <div className="h-11 w-11 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] flex items-center justify-center font-black text-sm">{profileUser.displayName[0]}</div>
+            }
           </div>
-          {scoreData && (
-            <div className="text-right flex-shrink-0">
-              <div className="text-white font-black text-2xl leading-none">{scoreData.totalPoints}</div>
-              <div className="text-[var(--text-dim)] text-[10px]">pts</div>
-            </div>
-          )}
-        </div>
-        <div className="border-b border-white/5" />
-      </header>
+        }
+        title={profileUser.displayName}
+        subtitle="Palpites da Copa 2026"
+        trailing={scoreData && (
+          <div className="rounded-2xl border border-white/8 bg-white/5 px-3.5 py-2 text-right">
+            <div className="text-white font-black text-2xl leading-none">{scoreData.totalPoints}</div>
+            <div className="text-[var(--text-dim)] text-[10px]">pts</div>
+          </div>
+        )}
+      />
 
       <div className="max-w-lg mx-auto px-4 pt-5">
 

@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, Zap } from "lucide-react";
-import { MATCHES, ROUND_ORDER, resolveMatchLabels } from "@/lib/matches";
+import { MATCHES, resolveMatchLabels } from "@/lib/matches";
 import type { Bet, Round } from "@/lib/types";
 import BetCard from "@/components/bolao/BetCard";
 import BottomNav from "@/components/layout/BottomNav";
+import MobileHeader from "@/components/layout/MobileHeader";
+import { isMatchLocked } from "@/lib/utils";
 
 const ROUND_INFO: Record<Round, { label: string; emoji: string }> = {
   r16:      { label: "2ª Fase",          emoji: "⚡" },
@@ -22,6 +24,10 @@ interface CurrentUser {
   id: string; name: string; displayName: string; photoUrl: string; isAdmin: boolean;
 }
 
+function getOpenMatches() {
+  return MATCHES.filter((match) => !isMatchLocked(match.kickoff));
+}
+
 export default function BolaoPage() {
   const router = useRouter();
   const [user, setUser] = useState<CurrentUser | null>(null);
@@ -31,6 +37,7 @@ export default function BolaoPage() {
   const [loading, setLoading] = useState(true);
   const [roundIntro, setRoundIntro] = useState<Round | null>(null);
   const [showSummary, setShowSummary] = useState(false);
+  const openMatches = getOpenMatches();
 
   useEffect(() => {
     async function init() {
@@ -48,11 +55,13 @@ export default function BolaoPage() {
         for (const b of betsArr) map.set(b.matchId, b);
         setBetsMap(map);
 
-        if (map.size >= MATCHES.length) {
+        const bettableMatches = getOpenMatches();
+        const firstUnbet = bettableMatches.findIndex((m) => !map.has(m.id));
+
+        if (bettableMatches.length === 0 || firstUnbet < 0) {
           setShowSummary(true);
         } else {
-          const firstUnbet = MATCHES.findIndex((m) => !map.has(m.id));
-          setCurrentIdx(firstUnbet >= 0 ? firstUnbet : 0);
+          setCurrentIdx(firstUnbet);
         }
       } catch {
         router.push("/login");
@@ -62,6 +71,12 @@ export default function BolaoPage() {
     }
     void init();
   }, [router]);
+
+  useEffect(() => {
+    if (!loading && !showSummary && openMatches.length > 0 && currentIdx >= openMatches.length) {
+      setCurrentIdx(openMatches.length - 1);
+    }
+  }, [currentIdx, loading, openMatches.length, showSummary]);
 
   async function saveBet(matchId: string, h: number, a: number) {
     const res = await fetch("/api/bets", {
@@ -87,12 +102,12 @@ export default function BolaoPage() {
 
   function doAdvance() {
     const nextIdx = currentIdx + 1;
-    if (nextIdx >= MATCHES.length) {
+    if (nextIdx >= openMatches.length) {
       setShowSummary(true);
       return;
     }
-    const currRound = MATCHES[currentIdx].round as Round;
-    const nextRound = MATCHES[nextIdx].round as Round;
+    const currRound = openMatches[currentIdx].round as Round;
+    const nextRound = openMatches[nextIdx].round as Round;
     if (currRound !== nextRound) {
       setRoundIntro(nextRound);
       setTimeout(() => {
@@ -119,7 +134,7 @@ export default function BolaoPage() {
   }
 
   function handleNext() {
-    if (currentIdx < MATCHES.length - 1) {
+    if (currentIdx < openMatches.length - 1) {
       setSlideDir(1);
       setCurrentIdx((i) => i + 1);
     } else {
@@ -143,10 +158,11 @@ export default function BolaoPage() {
     </div>
   );
 
-  const totalBets = betsMap.size;
-  const totalMatches = MATCHES.length;
-  const progress = totalBets / totalMatches;
-  const currentMatch = MATCHES[currentIdx];
+  const totalMatches = openMatches.length;
+  const totalBets = openMatches.filter((match) => betsMap.has(match.id)).length;
+  const missingBets = totalMatches - totalBets;
+  const progress = totalMatches > 0 ? totalBets / totalMatches : 1;
+  const currentMatch = openMatches[currentIdx];
   const roundInfo = currentMatch ? ROUND_INFO[currentMatch.round as Round] : null;
 
   /* ── Summary screen ── */
@@ -169,9 +185,19 @@ export default function BolaoPage() {
             </div>
 
             <div>
-              <h1 className="text-[2rem] font-black text-white leading-none">Simulada completa!</h1>
+              <h1 className="text-[2rem] font-black text-white leading-none">
+                {totalMatches === 0
+                  ? "Palpites encerrados"
+                  : missingBets === 0
+                  ? "Palpites em dia!"
+                  : "Fim dos jogos abertos"}
+              </h1>
               <p className="text-[var(--text-sub)] mt-3 text-[15px] leading-relaxed">
-                Você apostou em todos os {totalMatches} jogos da Copa do Mundo 2026.
+                {totalMatches === 0
+                  ? "Nenhum jogo está aberto para novos palpites agora."
+                  : missingBets === 0
+                  ? `Você preencheu todos os ${totalMatches} jogos que ainda estão abertos.`
+                  : `Ainda faltam ${missingBets} palpites nos jogos abertos.`}
               </p>
             </div>
 
@@ -193,12 +219,14 @@ export default function BolaoPage() {
               <Zap size={18} /> Ver Placar Geral
             </button>
 
-            <button
-              onClick={() => { setShowSummary(false); setCurrentIdx(0); }}
-              className="text-[var(--text-sub)] text-sm hover:text-white transition-colors"
-            >
-              Revisar palpites →
-            </button>
+            {totalMatches > 0 && (
+              <button
+                onClick={() => { setShowSummary(false); setCurrentIdx(0); }}
+                className="text-[var(--text-sub)] text-sm hover:text-white transition-colors"
+              >
+                Revisar palpites →
+              </button>
+            )}
           </motion.div>
         </div>
         <BottomNav />
@@ -206,9 +234,13 @@ export default function BolaoPage() {
     );
   }
 
+  if (!currentMatch) {
+    return null;
+  }
+
   const resolved = resolveMatchLabels(currentMatch, betsMap);
   const existingBet = betsMap.get(currentMatch.id);
-  const roundMatches = MATCHES.filter((m) => m.round === currentMatch.round);
+  const roundMatches = openMatches.filter((m) => m.round === currentMatch.round);
   const posInRound = roundMatches.findIndex((m) => m.id === currentMatch.id);
 
   return (
@@ -239,7 +271,7 @@ export default function BolaoPage() {
                 {ROUND_INFO[roundIntro].label}
               </h2>
               <p className="text-[var(--text-sub)] mt-3 text-[14px]">
-                {MATCHES.filter((m) => m.round === roundIntro).length} jogos
+                {openMatches.filter((m) => m.round === roundIntro).length} jogos
               </p>
             </motion.div>
           </motion.div>
@@ -247,39 +279,39 @@ export default function BolaoPage() {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="color-strip flex-shrink-0" />
-      <header className="bg-[var(--bg-mid)]/96 backdrop-blur-md border-b border-white/5 flex-shrink-0">
-        <div className="max-w-lg mx-auto px-4 py-3.5 flex items-center gap-3">
-          {user?.photoUrl
-            ? <img src={user.photoUrl} alt={user.displayName}
-                className="w-9 h-9 rounded-full object-cover border-2 border-[var(--primary)]/30 flex-shrink-0" />
-            : <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] flex items-center justify-center font-black text-sm flex-shrink-0">
+      <MobileHeader
+        leading={
+          user?.photoUrl
+            ? <img
+                src={user.photoUrl}
+                alt={user.displayName}
+                className="h-11 w-11 rounded-full object-cover border-2 border-[var(--primary)]/35"
+              />
+            : <div className="h-11 w-11 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] flex items-center justify-center font-black text-sm">
                 {user?.displayName?.[0]}
               </div>
-          }
-          <div className="flex-1 min-w-0">
-            <p className="text-white font-black text-[14px] leading-none truncate">{user?.displayName}</p>
-            <div className="flex items-center gap-2 mt-1.5">
-              <div className="flex-1 h-1 rounded-full overflow-hidden bg-white/8">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]"
-                  animate={{ width: `${progress * 100}%` }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                />
-              </div>
-              <span className="text-[var(--text-dim)] text-[10px] font-medium flex-shrink-0">
-                {totalBets}/{totalMatches}
-              </span>
+        }
+        title={user?.displayName ?? "Palpites"}
+        subtitle={
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]"
+                animate={{ width: `${progress * 100}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
             </div>
+            <span className="shrink-0 text-[10px] font-bold text-[var(--text-dim)]">
+              {totalBets}/{totalMatches}
+            </span>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-dim)] hover:text-white transition-colors flex-shrink-0"
-          >
-            <LogOut size={14} />
+        }
+        trailing={
+          <button onClick={handleLogout} className="icon-button" aria-label="Sair">
+            <LogOut size={16} />
           </button>
-        </div>
-      </header>
+        }
+      />
 
       {/* Main — fill remaining height */}
       <div className="flex-1 relative overflow-hidden min-h-0">
@@ -307,7 +339,7 @@ export default function BolaoPage() {
               onPrev={handlePrev}
               onNext={handleNext}
               canPrev={currentIdx > 0}
-              canNext={currentIdx < MATCHES.length - 1}
+              canNext={currentIdx < openMatches.length - 1}
               posInRound={posInRound}
               roundTotal={roundMatches.length}
               roundLabel={roundInfo?.label ?? ""}

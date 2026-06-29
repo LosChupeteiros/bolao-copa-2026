@@ -6,6 +6,7 @@ import Image from "next/image";
 import { MATCHES, ROUND_ORDER, ROUND_LABELS, getFlagUrl, resolveMatchLabels } from "@/lib/matches";
 import type { MatchResult, Round } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import MobileHeader from "@/components/layout/MobileHeader";
 
 interface ResultsMap {
   [matchId: string]: MatchResult;
@@ -106,12 +107,14 @@ export default function AdminPage() {
 
   if (!authed) {
     return (
-      <div className="min-h-screen bg-copa flex items-center justify-center px-4">
-        <div className="w-full max-w-sm bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-6">
-          <div className="text-center mb-5">
-            <Shield size={36} className="text-[var(--secondary)] mx-auto mb-2" />
-            <h1 className="text-white font-bold text-xl">Área Admin</h1>
-            <p className="text-[var(--text-dim)] text-sm mt-1">
+      <div className="min-h-screen bg-copa flex items-center justify-center px-5 py-10">
+        <div className="soft-panel w-full max-w-sm p-6">
+          <div className="text-center mb-6">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--secondary)]/12 text-[var(--secondary)]">
+              <Shield size={30} />
+            </div>
+            <h1 className="text-white font-black text-2xl leading-none">Área Admin</h1>
+            <p className="text-[var(--text-sub)] text-sm mt-2">
               Inserir resultados dos jogos
             </p>
           </div>
@@ -121,14 +124,14 @@ export default function AdminPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Senha admin"
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-white placeholder-[var(--text-dim)] focus:outline-none focus:border-[var(--secondary)]"
+              className="mobile-field px-4"
             />
             {authError && (
               <p className="text-red-400 text-sm text-center">{authError}</p>
             )}
             <button
               type="submit"
-              className="bg-[var(--secondary)] text-[var(--bg)] font-bold py-3 rounded-xl"
+              className="primary-action"
             >
               Entrar
             </button>
@@ -140,12 +143,15 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-copa pb-8">
-      <header className="sticky top-0 z-40 bg-[var(--bg-mid)]/95 backdrop-blur border-b border-[var(--card-border)]">
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
-          <Shield size={18} className="text-[var(--secondary)]" />
-          <span className="text-white font-bold">Admin — Resultados</span>
-        </div>
-      </header>
+      <MobileHeader
+        leading={
+          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--secondary)]/20 bg-[var(--secondary)]/10 text-[var(--secondary)]">
+            <Shield size={19} />
+          </div>
+        }
+        title="Admin"
+        subtitle="Resultados dos jogos"
+      />
 
       <div className="max-w-lg mx-auto px-4 pt-4">
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mb-4">
@@ -164,7 +170,7 @@ export default function AdminPage() {
                 "flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap border",
                 activeRound === round
                   ? "bg-[var(--secondary)] border-[var(--secondary)] text-[var(--bg)]"
-                  : "bg-[var(--card)] border-[var(--card-border)] text-[var(--text-muted)]"
+                  : "bg-[var(--card)] border-[var(--card-border)] text-[var(--text-sub)]"
               )}
             >
               {ROUND_LABELS[round]}

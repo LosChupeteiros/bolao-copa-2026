@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import AppShell from "@/components/layout/AppShell";
+import MobileHeader from "@/components/layout/MobileHeader";
 import type { UserScore } from "@/lib/types";
 import { ROUND_LABELS } from "@/lib/matches";
 import { cn } from "@/lib/utils";
@@ -50,23 +51,20 @@ export default function PlacarPage() {
   return (
     <AppShell
       header={
-        <header className="sticky top-0 z-40 bg-[var(--bg-mid)]/96 backdrop-blur-md">
-          <div className="color-strip" />
-          <div className="max-w-lg mx-auto px-5 py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-white font-black text-[1.4rem] leading-none">Placar Geral</h1>
-              <p className="text-[var(--text-sub)] text-[12px] mt-1.5">Copa do Mundo 2026</p>
-            </div>
+        <MobileHeader
+          title="Placar Geral"
+          subtitle="Copa do Mundo 2026"
+          trailing={
             <button
               onClick={() => { setRefreshing(true); void loadData(); }}
               disabled={refreshing}
-              className="w-10 h-10 flex items-center justify-center rounded-full text-[var(--text-dim)] hover:text-white hover:bg-white/7 transition-all"
+              className="icon-button"
+              aria-label="Atualizar placar"
             >
-              <RefreshCw size={16} className={cn(refreshing && "animate-spin")} />
+              <RefreshCw size={17} className={cn(refreshing && "animate-spin")} />
             </button>
-          </div>
-          <div className="border-b border-white/5" />
-        </header>
+          }
+        />
       }
     >
       <div className="max-w-lg mx-auto px-4 pt-5 pb-4">
