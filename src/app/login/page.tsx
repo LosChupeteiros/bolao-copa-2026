@@ -60,7 +60,8 @@ export default function LoginPage() {
 
           <div className="relative">
             <User
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+              className="absolute top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+              style={{ left: 18 }}
               size={18}
             />
             <input
@@ -71,14 +72,16 @@ export default function LoginPage() {
               autoCapitalize="none"
               autoCorrect="off"
               autoComplete="username"
-              className="w-full bg-white/7 border border-white/10 rounded-2xl pl-12 pr-4 py-5 text-white text-[16px] placeholder-white/25 focus:outline-none focus:border-[var(--primary)]/55 focus:bg-white/9 transition-all"
+              style={{ paddingLeft: "3.2rem" }}
+              className="w-full bg-white/7 border border-white/10 rounded-2xl pr-4 py-5 text-white text-[16px] placeholder-white/25 focus:outline-none focus:border-[var(--primary)]/55 focus:bg-white/9 transition-all"
               required
             />
           </div>
 
           <div className="relative">
             <Lock
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+              className="absolute top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+              style={{ left: 18 }}
               size={18}
             />
             <input
@@ -87,7 +90,8 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Senha"
               autoComplete="current-password"
-              className="w-full bg-white/7 border border-white/10 rounded-2xl pl-12 pr-14 py-5 text-white text-[16px] placeholder-white/25 focus:outline-none focus:border-[var(--primary)]/55 focus:bg-white/9 transition-all"
+              style={{ paddingLeft: "3.2rem" }}
+              className="w-full bg-white/7 border border-white/10 rounded-2xl pr-14 py-5 text-white text-[16px] placeholder-white/25 focus:outline-none focus:border-[var(--primary)]/55 focus:bg-white/9 transition-all"
               required
             />
             <button

@@ -128,13 +128,14 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
 
           <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" size={17} />
+            <User className="absolute top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" style={{ left: 18 }} size={17} />
             <input
               type="text"
               value={displayName}
               onChange={(e) => handleDisplayNameChange(e.target.value)}
               placeholder="Primeiro nome"
-              className="w-full bg-white/7 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
+              style={{ paddingLeft: "3.2rem" }}
+              className="w-full bg-white/7 border border-white/10 rounded-2xl pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
               required
             />
           </div>
@@ -148,13 +149,14 @@ export default function RegisterPage() {
           )}
 
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" size={17} />
+            <Lock className="absolute top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" style={{ left: 18 }} size={17} />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Senha (mín. 4 caracteres)"
-              className="w-full bg-white/7 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
+              style={{ paddingLeft: "3.2rem" }}
+              className="w-full bg-white/7 border border-white/10 rounded-2xl pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
               required
               minLength={4}
             />

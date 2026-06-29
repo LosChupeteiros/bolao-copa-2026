@@ -1,22 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #00B545;
-  --primary-dark: #009038;
-  --primary-light: #00D452;
-  --secondary: #FFD100;
-  --accent: #003DA5;
-  --bg: #020C18;
-  --bg-mid: #04111F;
-  --card: #091627;
-  --card-border: rgba(255,255,255,0.07);
-  --card-border-hover: rgba(255,255,255,0.13);
-  --text: #FFFFFF;
-  --text-sub: rgba(255,255,255,0.45);
-  --text-dim: rgba(255,255,255,0.20);
+  --primary: #00C853;
+  --primary-dark: #00A040;
+  --primary-glow: rgba(0, 200, 83, 0.20);
+  --secondary: #FFD600;
+  --secondary-glow: rgba(255, 214, 0, 0.18);
+  --accent: #2563EB;
+
+  --bg: #060810;
+  --bg-mid: #0D1626;
+  --card: #111D2E;
+  --card-alt: #162035;
+  --card-border: rgba(255, 255, 255, 0.07);
+  --card-border-hover: rgba(255, 255, 255, 0.14);
+
+  --text: #EDF2FF;
+  --text-sub: rgba(237, 242, 255, 0.45);
+  --text-dim: rgba(237, 242, 255, 0.20);
+
   --gold: #FFD700;
-  --silver: #B0BEC5;
-  --bronze: #C07840;
+  --silver: #B8C4D0;
+  --bronze: #CD8B4A;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,32 +35,49 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
-::-webkit-scrollbar { width: 0; }
+/* Hide number spinners */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 input[type=number] { -moz-appearance: textfield; }
 
-/* Background: deep night sky with subtle green/blue haze */
+/* Scrollbars */
+::-webkit-scrollbar { width: 0; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Copa background ── */
 .bg-copa {
   background:
-    radial-gradient(ellipse 70% 50% at 20% -10%, rgba(0,181,69,0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 50% at 85% 110%, rgba(0,61,165,0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 55% at 5% 0%, rgba(0, 200, 83, 0.12) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 50% at 98% 100%, rgba(37, 99, 235, 0.14) 0%, transparent 52%),
     var(--bg);
+  min-height: 100vh;
 }
 
-/* ── Score input: LED scoreboard style ── */
+/* ── Brazil color strip ── */
+.color-strip {
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+}
+
+/* ── Flags ── */
+.flag-img { display: block; object-fit: cover; }
+
+/* ── Safe area ── */
+.pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
+
+/* ── Score input — standard (read-only in perfil) ── */
 .score-input {
-  width: 3.75rem;
-  height: 3.75rem;
+  width: 3.5rem;
+  height: 3.5rem;
   text-align: center;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  background: rgba(0, 0, 0, 0.55);
-  border: 2px solid rgba(255, 255, 255, 0.07);
-  border-radius: 0.875rem;
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.50);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -63,39 +85,56 @@ input[type=number] { -moz-appearance: textfield; }
   outline: none;
   border-color: var(--secondary);
   color: var(--secondary);
-  background: rgba(255, 209, 0, 0.06);
-  box-shadow: 0 0 0 4px rgba(255, 209, 0, 0.12);
+  background: rgba(255, 214, 0, 0.06);
+  box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.12);
 }
 .score-input.invalid {
-  border-color: rgba(248, 113, 113, 0.35);
-  color: rgba(248, 113, 113, 0.75);
+  border-color: rgba(239, 68, 68, 0.40);
+  color: rgba(239, 68, 68, 0.80);
 }
 .score-input.invalid:focus {
-  border-color: #F87171;
-  color: #F87171;
-  background: rgba(248, 113, 113, 0.06);
-  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.12);
+  border-color: #EF4444;
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.06);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
 }
 
-/* ── Safe area ── */
-.pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
-
-/* ── Color strip at top of headers ── */
-.color-strip {
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+/* ── Score input XL — full-screen bet view ── */
+.score-input-xl {
+  width: 5.5rem;
+  height: 5.5rem;
+  text-align: center;
+  font-size: 2.9rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2.5px solid rgba(255, 255, 255, 0.09);
+  border-radius: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.score-input-xl:focus {
+  outline: none;
+  border-color: var(--secondary);
+  color: var(--secondary);
+  background: rgba(255, 214, 0, 0.07);
+  box-shadow: 0 0 0 5px rgba(255, 214, 0, 0.13);
+}
+.score-input-xl.invalid {
+  border-color: rgba(239, 68, 68, 0.40);
+  color: rgba(239, 68, 68, 0.80);
+}
+.score-input-xl.invalid:focus {
+  border-color: #EF4444;
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.06);
+  box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.12);
 }
 
-/* ── Flag base ── */
-.flag-img { display: block; border-radius: 3px; object-fit: cover; }
-
-/* ── Glow animations ── */
+/* ── Animations ── */
 @keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0,181,69,0.5); }
-  60% { box-shadow: 0 0 0 8px rgba(0,181,69,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.45); }
+  60%       { box-shadow: 0 0 0 8px rgba(0, 200, 83, 0); }
 }
 .ring-brasil { animation: pulse-green 2.4s ease infinite; }
-
-/* ── Scrollbar hide ── */
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
