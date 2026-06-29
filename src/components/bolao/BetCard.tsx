@@ -109,8 +109,8 @@ export default function BetCard({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-28">
-        <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center">
+      <div className="flex-1 overflow-hidden px-4 pt-3 pb-20">
+        <div className="mx-auto flex h-full w-full max-w-md flex-col justify-center">
           <div className="flex items-center gap-2">
             <TeamSide label={homeLabel} flagUrl={homeFlagUrl} />
 
@@ -189,7 +189,7 @@ export default function BetCard({
             <p className="mt-4 text-center text-[13px] text-red-400">{apiError}</p>
           )}
 
-          <div className="mx-auto mt-5 w-full max-w-[23rem]">
+          <div className="mx-auto mt-5 w-full max-w-[21.75rem]">
             <div className="flex items-center gap-3">
               <RoundActionButton
                 onClick={onPrev}

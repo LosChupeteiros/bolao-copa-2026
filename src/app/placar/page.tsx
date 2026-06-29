@@ -85,17 +85,19 @@ export default function PlacarPage() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-2 p-3">
+          <div className="flex flex-col gap-2 p-3.5">
             {PRIZES.map(({ place, prize, label, color }) => (
-              <div key={place} className="rounded-2xl border border-white/7 bg-white/4 px-2 py-3 text-center">
-                <div
-                  className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-black"
-                  style={{ color, background: "rgba(255,255,255,0.06)" }}
-                >
-                  {place}º
+              <div key={place} className="flex items-center justify-between gap-4 rounded-2xl border border-white/7 bg-white/4 px-4 py-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-black"
+                    style={{ color, background: "rgba(255,255,255,0.06)" }}
+                  >
+                    {place}º
+                  </div>
+                  <p className="truncate text-sm font-black text-white">{label}</p>
                 </div>
-                <p className="text-[15px] font-black leading-none" style={{ color }}>{prize}</p>
-                <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white/28">{label}</p>
+                <p className="shrink-0 text-[17px] font-black leading-none" style={{ color }}>{prize}</p>
               </div>
             ))}
           </div>
@@ -133,7 +135,7 @@ export default function PlacarPage() {
                   <Link
                     href={`/perfil/${score.user.id}`}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-4 rounded-2xl border transition-all active:scale-[0.98]",
+                      "flex items-center gap-3 rounded-2xl border px-4 py-4 pr-5 transition-all active:scale-[0.98]",
                       cardClass
                     )}
                   >
@@ -195,9 +197,9 @@ export default function PlacarPage() {
                     </div>
 
                     {/* Points */}
-                    <div className="min-w-[4.6rem] flex-shrink-0 rounded-2xl bg-black/18 px-3 py-2 text-right">
+                    <div className="ml-1 min-w-[5rem] flex-shrink-0 rounded-2xl bg-black/18 px-4 py-2.5 text-right">
                       <div
-                        className="text-[1.55rem] font-black leading-none tabular-nums"
+                        className="text-[1.45rem] font-black leading-none tabular-nums"
                         style={{ color: isTop3 ? PRIZE_COLORS[idx] : isMe ? "var(--primary)" : "white" }}
                       >
                         {score.totalPoints}
