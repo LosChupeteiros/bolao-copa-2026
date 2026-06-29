@@ -51,16 +51,16 @@ input[type=number] { -moz-appearance: textfield; }
     var(--bg);
 }
 
-/* Score input */
+/* Score input — big and tactile */
 .score-input {
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 900;
-  background: rgba(255,255,255,0.04);
-  border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 0.5rem;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 1rem;
   color: white;
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
   -webkit-tap-highlight-color: transparent;
@@ -69,14 +69,18 @@ input[type=number] { -moz-appearance: textfield; }
 .score-input:focus {
   outline: none;
   border-color: var(--secondary);
-  background: rgba(255, 223, 0, 0.06);
-  box-shadow: 0 0 0 3px rgba(255, 223, 0, 0.12);
+  background: rgba(255, 223, 0, 0.07);
+  box-shadow: 0 0 0 4px rgba(255, 223, 0, 0.12);
+}
+
+.score-input.invalid {
+  border-color: rgba(248, 113, 113, 0.5);
 }
 
 .score-input.invalid:focus {
   border-color: #F87171;
   background: rgba(248, 113, 113, 0.06);
-  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.12);
 }
 
 /* Safe area for bottom nav */
@@ -96,4 +100,10 @@ input[type=number] { -moz-appearance: textfield; }
   display: block;
   border-radius: 3px;
   object-fit: cover;
+}
+
+/* Color strip */
+.color-strip {
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary) 50%, var(--accent));
 }

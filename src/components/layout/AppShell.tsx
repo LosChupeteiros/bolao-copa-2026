@@ -11,7 +11,7 @@ export default function AppShell({ children, header }: AppShellProps) {
   return (
     <div className="min-h-screen flex flex-col">
       {header}
-      <main className="flex-1 pb-20">{children}</main>
+      <main className="flex-1 pb-32">{children}</main>
       <BottomNav />
     </div>
   );

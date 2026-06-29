@@ -76,26 +76,16 @@ export default function BetCard({
   return (
     <div
       className={cn(
-        "bg-[var(--card)] border rounded-xl overflow-hidden transition-colors",
+        "bg-[var(--card)] border rounded-2xl overflow-hidden transition-all",
         locked
-          ? "border-white/5 opacity-75"
+          ? "border-white/5 opacity-70"
           : saved
-          ? "border-[var(--primary)]/50"
+          ? "border-[var(--primary)]/50 shadow-[0_0_0_1px_rgba(0,156,59,0.12)]"
           : "border-[var(--card-border)]"
       )}
     >
-      {/* Header: jogo info */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
-        <span className="text-[var(--text-dim)] text-[11px] font-medium tracking-wide">
-          {currentIndex + 1}/{totalMatches}
-        </span>
-        <span className="text-[var(--text-dim)] text-[11px] tracking-wide">
-          {match.date}
-        </span>
-      </div>
-
-      {/* Match body */}
-      <div className="flex items-center gap-3 px-4 py-5">
+      {/* Match section */}
+      <div className="flex items-center gap-3 px-5 pt-6 pb-3">
 
         {/* Home team */}
         <div className="flex-1 min-w-0">
@@ -103,23 +93,23 @@ export default function BetCard({
             <img
               src={homeFlagUrl}
               alt={homeLabel}
-              className="flag-img w-10 h-[27px] mb-2"
+              className="flag-img w-12 h-[32px] mb-2.5"
               loading="lazy"
             />
           ) : (
-            <div className="w-10 h-[27px] bg-white/5 rounded-sm mb-2" />
+            <div className="w-12 h-[32px] bg-white/5 rounded mb-2.5" />
           )}
-          <p className="text-[13px] font-bold text-white leading-snug break-words">
+          <p className="text-[14px] font-black text-white leading-snug break-words">
             {homeLabel}
           </p>
         </div>
 
         {/* Score area */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2.5 flex-shrink-0">
           {locked || saved ? (
             <>
               <ScoreBox value={homeScore} active={!locked && saved} />
-              <span className="text-white/20 text-base font-bold">×</span>
+              <span className="text-white/20 text-base">×</span>
               <ScoreBox value={awayScore} active={!locked && saved} />
             </>
           ) : (
@@ -136,7 +126,7 @@ export default function BetCard({
                 onFocus={(e) => e.target.select()}
                 className={cn("score-input", isDraw && "invalid")}
               />
-              <span className="text-white/20 text-base font-bold">×</span>
+              <span className="text-white/20 text-base">×</span>
               <input
                 ref={awayRef}
                 type="number"
@@ -159,64 +149,79 @@ export default function BetCard({
             <img
               src={awayFlagUrl}
               alt={awayLabel}
-              className="flag-img w-10 h-[27px] mb-2"
+              className="flag-img w-12 h-[32px] mb-2.5"
               loading="lazy"
             />
           ) : (
-            <div className="w-10 h-[27px] bg-white/5 rounded-sm mb-2" />
+            <div className="w-12 h-[32px] bg-white/5 rounded mb-2.5" />
           )}
-          <p className="text-[13px] font-bold text-white leading-snug text-right break-words">
+          <p className="text-[14px] font-black text-white leading-snug text-right break-words">
             {awayLabel}
           </p>
         </div>
       </div>
 
+      {/* Meta row: date + locked indicator */}
+      <div className="flex items-center justify-between px-5 pb-4">
+        <span className="text-white/20 text-[11px]">{match.date}</span>
+        <div className="flex items-center gap-1.5">
+          {locked && (
+            <span className="flex items-center gap-1 text-white/20 text-[11px]">
+              <Lock size={9} /> encerrado
+            </span>
+          )}
+          {!locked && !saved && (
+            <span className="text-white/15 text-[11px]">{currentIndex + 1}/{totalMatches}</span>
+          )}
+          {saved && !locked && (
+            <span className="flex items-center gap-1 text-[var(--primary)]/60 text-[11px] font-medium">
+              <Check size={9} strokeWidth={3} /> apostado
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Footer: action */}
-      <div className="px-4 pb-4">
-        {locked ? (
-          <div className="flex items-center justify-center gap-1.5 text-white/25 text-xs py-2">
-            <Lock size={11} />
-            <span>Encerrado</span>
-          </div>
-        ) : saved ? (
+      <div className="px-5 pb-5">
+        {locked ? null : saved ? (
           <div className="flex items-center gap-2">
-            <div className="flex-1 flex items-center justify-center gap-1.5 text-[var(--primary)] text-xs font-semibold py-2.5 rounded-lg bg-[var(--primary)]/8 border border-[var(--primary)]/20">
-              <Check size={12} strokeWidth={3} />
+            <div className="flex-1 flex items-center justify-center gap-2 text-[var(--primary)] text-sm font-bold py-3 rounded-full bg-[var(--primary)]/8 border border-[var(--primary)]/20">
+              <Check size={14} strokeWidth={3} />
               Palpite confirmado
             </div>
             <button
               onClick={() => { setSaved(false); setApiError(""); }}
-              className="p-2.5 text-white/25 hover:text-white/60 transition-colors rounded-lg border border-white/6"
+              className="w-11 h-11 flex items-center justify-center text-white/25 hover:text-white/60 transition-colors rounded-full border border-white/8 hover:border-white/20"
               title="Editar palpite"
             >
-              <Pencil size={12} />
+              <Pencil size={13} />
             </button>
           </div>
         ) : (
           <>
             {isDraw && (
-              <p className="text-amber-400/90 text-[11px] text-center mb-2.5 font-medium">
+              <p className="text-amber-400/90 text-xs text-center mb-3 font-medium">
                 Copa eliminatória não tem empate — escolha um vencedor
               </p>
             )}
             {apiError && (
-              <p className="text-red-400 text-[11px] text-center mb-2.5">{apiError}</p>
+              <p className="text-red-400 text-xs text-center mb-3">{apiError}</p>
             )}
             <button
               onClick={handleConfirm}
               disabled={saving || isDraw}
               className={cn(
-                "w-full font-bold py-3 rounded-lg transition-all text-sm flex items-center justify-center gap-2",
+                "w-full font-black py-4 rounded-full transition-all text-sm flex items-center justify-center gap-2",
                 isDraw
                   ? "bg-white/4 text-white/20 cursor-not-allowed"
-                  : "bg-[var(--primary)] hover:bg-[var(--primary-dark)] active:scale-[0.98] text-white"
+                  : "bg-[var(--primary)] hover:bg-[var(--primary-dark)] active:scale-[0.98] text-white shadow-[0_4px_16px_rgba(0,156,59,0.25)]"
               )}
             >
               {saving ? (
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <Check size={14} strokeWidth={3} />
+                  <Check size={15} strokeWidth={3} />
                   Confirmar Palpite
                 </>
               )}
@@ -232,9 +237,9 @@ function ScoreBox({ value, active }: { value: number; active: boolean }) {
   return (
     <div
       className={cn(
-        "w-12 h-12 flex items-center justify-center rounded-lg text-2xl font-black border",
+        "w-14 h-14 flex items-center justify-center rounded-2xl text-2xl font-black border",
         active
-          ? "text-white border-[var(--primary)]/35 bg-[var(--primary)]/6"
+          ? "text-white border-[var(--primary)]/40 bg-[var(--primary)]/8"
           : "text-white/35 border-white/8 bg-white/3"
       )}
     >
