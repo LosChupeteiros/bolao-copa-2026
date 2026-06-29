@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Lock, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Lock, Pencil } from "lucide-react";
 import type { Match } from "@/lib/types";
-import { isMatchLocked } from "@/lib/utils";
 import { getFlagUrl } from "@/lib/matches";
-import { cn } from "@/lib/utils";
+import { cn, isMatchLocked } from "@/lib/utils";
 
 interface BetCardProps {
   match: Match;
@@ -50,6 +49,8 @@ export default function BetCard({
   const isDraw = homeScore === awayScore;
   const showInputs = !locked && (!saved || editing);
   const roundProgress = (posInRound + 1) / roundTotal;
+  const homeFlagUrl = getFlagUrl(homeLabel);
+  const awayFlagUrl = getFlagUrl(awayLabel);
 
   async function handleConfirm() {
     if (locked || isDraw) return;
@@ -85,72 +86,58 @@ export default function BetCard({
     setApiError("");
   }
 
-  const homeFlagUrl = getFlagUrl(homeLabel);
-  const awayFlagUrl = getFlagUrl(awayLabel);
-
   return (
     <div className="h-full flex flex-col">
-
-      {/* ── Phase indicator ── */}
-      <div className="px-5 pt-6 pb-5 flex-shrink-0">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-[var(--primary)] font-black text-[13px] tracking-wide">
-            {roundEmoji} {roundLabel}
-          </span>
-          <span className="text-[var(--text-dim)] text-[12px] font-semibold">
-            {posInRound + 1} / {roundTotal}
-          </span>
-        </div>
-        <div className="h-1.5 rounded-full bg-white/6 overflow-hidden">
-          <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]"
-            initial={{ width: 0 }}
-            animate={{ width: `${roundProgress * 100}%` }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          />
+      <div className="px-5 pt-5 pb-3 flex-shrink-0">
+        <div className="rounded-2xl border border-white/7 bg-white/4 p-3">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <span className="truncate text-[13px] font-black tracking-wide text-[var(--primary)]">
+              {roundEmoji} {roundLabel}
+            </span>
+            <span className="shrink-0 rounded-full bg-black/24 px-2.5 py-1 text-[12px] font-black text-[var(--text-sub)]">
+              {posInRound + 1}/{roundTotal}
+            </span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-white/7">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]"
+              initial={{ width: 0 }}
+              animate={{ width: `${roundProgress * 100}%` }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* ── Teams + Score ── */}
-      <div className="flex-1 flex items-center justify-center px-4 py-2">
-        <div className="w-full">
-
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-28">
+        <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center">
           <div className="flex items-center gap-2">
+            <TeamSide label={homeLabel} flagUrl={homeFlagUrl} />
 
-            {/* Home */}
-            <div className="flex-1 flex flex-col items-center gap-3 min-w-0">
-              {homeFlagUrl
-                ? <img
-                    src={homeFlagUrl}
-                    alt={homeLabel}
-                    className="flag-img"
-                    style={{ width: 72, height: 48, borderRadius: 8, boxShadow: "0 4px 18px rgba(0,0,0,0.45)" }}
-                    loading="lazy"
-                  />
-                : <div style={{ width: 72, height: 48, borderRadius: 8 }} className="bg-white/6" />
-              }
-              <p className="text-white font-black text-[15px] text-center leading-tight px-1 break-words">
-                {homeLabel}
-              </p>
-            </div>
-
-            {/* Score */}
             <div className="flex-shrink-0 flex flex-col items-center gap-2.5">
               <div className="flex items-center gap-2.5">
                 {showInputs ? (
                   <>
                     <input
                       ref={homeRef}
-                      type="number" min={0} max={20} inputMode="numeric" pattern="[0-9]*"
+                      type="number"
+                      min={0}
+                      max={20}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       value={homeScore}
                       onChange={(e) => handleInput(e.target.value, setHomeScore, awayRef)}
                       onFocus={(e) => e.target.select()}
                       className={cn("score-input-xl", isDraw && "invalid")}
                     />
-                    <span className="text-white/15 font-black text-2xl select-none">×</span>
+                    <span className="select-none text-2xl font-black text-white/15">x</span>
                     <input
                       ref={awayRef}
-                      type="number" min={0} max={20} inputMode="numeric" pattern="[0-9]*"
+                      type="number"
+                      min={0}
+                      max={20}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       value={awayScore}
                       onChange={(e) => handleInput(e.target.value, setAwayScore)}
                       onFocus={(e) => e.target.select()}
@@ -160,15 +147,14 @@ export default function BetCard({
                 ) : (
                   <>
                     <ScoreBoxXL value={homeScore} active={saved && !locked} />
-                    <span className="text-white/15 font-black text-2xl select-none">×</span>
+                    <span className="select-none text-2xl font-black text-white/15">x</span>
                     <ScoreBoxXL value={awayScore} active={saved && !locked} />
                   </>
                 )}
               </div>
 
-              {/* Status under score */}
               {locked && (
-                <span className="flex items-center gap-1 text-[var(--text-dim)] text-[11px] font-medium">
+                <span className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-dim)]">
                   <Lock size={10} /> encerrado
                 </span>
               )}
@@ -176,133 +162,156 @@ export default function BetCard({
                 <motion.span
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex items-center gap-1 text-[var(--primary)] text-[11px] font-black"
+                  className="flex items-center gap-1 text-[11px] font-black text-[var(--primary)]"
                 >
                   <Check size={10} strokeWidth={3} /> confirmado
                 </motion.span>
               )}
             </div>
 
-            {/* Away */}
-            <div className="flex-1 flex flex-col items-center gap-3 min-w-0">
-              {awayFlagUrl
-                ? <img
-                    src={awayFlagUrl}
-                    alt={awayLabel}
-                    className="flag-img"
-                    style={{ width: 72, height: 48, borderRadius: 8, boxShadow: "0 4px 18px rgba(0,0,0,0.45)" }}
-                    loading="lazy"
-                  />
-                : <div style={{ width: 72, height: 48, borderRadius: 8 }} className="bg-white/6" />
-              }
-              <p className="text-white font-black text-[15px] text-center leading-tight px-1 break-words">
-                {awayLabel}
-              </p>
-            </div>
-
+            <TeamSide label={awayLabel} flagUrl={awayFlagUrl} align="right" />
           </div>
 
-          {/* Date */}
-          <p className="text-center text-[var(--text-dim)] text-[12px] mt-7 font-medium">
+          <p className="mt-6 text-center text-[12px] font-medium text-[var(--text-dim)]">
             {match.date}
           </p>
 
-          {/* Warnings */}
           {showInputs && isDraw && (
             <motion.p
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-amber-400 text-[13px] text-center mt-4"
+              className="mt-4 text-center text-[13px] text-amber-400"
             >
-              Eliminatória não tem empate — escolha um vencedor
+              Eliminatória não tem empate. Escolha um vencedor.
             </motion.p>
           )}
           {apiError && (
-            <p className="text-red-400 text-[13px] text-center mt-4">{apiError}</p>
+            <p className="mt-4 text-center text-[13px] text-red-400">{apiError}</p>
           )}
-        </div>
-      </div>
 
-      {/* ── Actions ── */}
-      <div className="px-5 pb-28 flex-shrink-0">
+          <div className="mx-auto mt-5 w-full max-w-[23rem]">
+            <div className="flex items-center gap-3">
+              <RoundActionButton
+                onClick={onPrev}
+                disabled={!canPrev}
+                tone="neutral"
+                label="Voltar"
+              >
+                <ChevronLeft size={20} />
+              </RoundActionButton>
 
-        {locked ? (
-          <div className="flex items-center justify-center gap-2 py-5 rounded-2xl bg-white/4 border border-white/7 text-[var(--text-dim)] text-[14px]">
-            <Lock size={14} /> Palpite encerrado
-          </div>
-        ) : saved && !editing ? (
-          <div className="flex gap-2.5">
-            <div className="flex-1 flex items-center justify-center gap-2 py-5 rounded-2xl bg-[var(--primary)]/10 border border-[var(--primary)]/25 text-[var(--primary)] text-[14px] font-bold">
-              <Check size={15} strokeWidth={3} /> Palpite confirmado
-            </div>
-            <button
-              onClick={() => setEditing(true)}
-              className="w-14 flex-shrink-0 flex items-center justify-center rounded-2xl border border-white/8 text-[var(--text-dim)] hover:text-white hover:border-white/16 transition-all"
-            >
-              <Pencil size={14} />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={handleConfirm}
-            disabled={saving || isDraw}
-            className={cn(
-              "w-full py-5 rounded-2xl font-black text-[15px] transition-all flex items-center justify-center gap-2",
-              isDraw
-                ? "bg-white/5 text-white/15 cursor-not-allowed"
-                : saving
-                ? "bg-[var(--primary)]/70 text-white"
-                : "bg-[var(--primary)] text-white shadow-[0_6px_28px_rgba(0,200,83,0.35)] active:scale-[0.98]"
-            )}
-          >
-            {saving
-              ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              : <><Check size={16} strokeWidth={3} /> {editing ? "Atualizar Palpite" : "Confirmar Palpite"}</>
-            }
-          </button>
-        )}
-
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-4">
-          <button
-            onClick={onPrev}
-            disabled={!canPrev}
-            className={cn(
-              "flex items-center gap-1 px-4 py-3 rounded-full text-[13px] font-semibold transition-all",
-              canPrev
-                ? "text-[var(--text-sub)] hover:text-white hover:bg-white/6 active:bg-white/10"
-                : "text-white/10 cursor-not-allowed"
-            )}
-          >
-            <ChevronLeft size={15} /> Anterior
-          </button>
-
-          {editing ? (
-            <button
-              onClick={cancelEdit}
-              className="text-[var(--text-dim)] text-[13px] px-4 py-3 rounded-full hover:text-white transition-colors"
-            >
-              Cancelar
-            </button>
-          ) : (
-            <button
-              onClick={onNext}
-              disabled={!canNext}
-              className={cn(
-                "flex items-center gap-1 px-4 py-3 rounded-full text-[13px] font-semibold transition-all",
-                !canNext
-                  ? "text-white/10 cursor-not-allowed"
-                  : saved
-                  ? "text-[var(--secondary)] hover:bg-[var(--secondary)]/10 active:bg-[var(--secondary)]/15 font-black"
-                  : "text-[var(--text-sub)] hover:text-white hover:bg-white/6 active:bg-white/10"
+              {locked ? (
+                <div className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-full border border-white/7 bg-white/4 px-4 text-[14px] font-black text-[var(--text-dim)]">
+                  <Lock size={15} /> Encerrado
+                </div>
+              ) : saved && !editing ? (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-full border border-[var(--primary)]/28 bg-[var(--primary)]/12 px-4 text-[14px] font-black text-[var(--primary)] transition-all active:scale-[0.98]"
+                >
+                  <Pencil size={15} /> Editar palpite
+                </button>
+              ) : (
+                <button
+                  onClick={handleConfirm}
+                  disabled={saving || isDraw}
+                  className={cn(
+                    "flex min-h-14 flex-1 items-center justify-center gap-2 rounded-full px-4 text-[15px] font-black transition-all",
+                    isDraw
+                      ? "bg-white/5 text-white/18 cursor-not-allowed"
+                      : saving
+                      ? "bg-[var(--primary)]/70 text-white"
+                      : "bg-[var(--primary)] text-white shadow-[0_10px_28px_rgba(22,184,98,0.30)] active:scale-[0.98]"
+                  )}
+                >
+                  {saving
+                    ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    : <><Check size={16} strokeWidth={3} /> {editing ? "Atualizar" : "Confirmar"}</>
+                  }
+                </button>
               )}
-            >
-              {saved ? "Próximo" : "Pular"} <ChevronRight size={15} />
-            </button>
-          )}
+
+              <RoundActionButton
+                onClick={onNext}
+                disabled={!canNext}
+                tone="gold"
+                label={saved ? "Próximo" : "Pular"}
+              >
+                <ChevronRight size={20} />
+              </RoundActionButton>
+            </div>
+
+            {editing && (
+              <button
+                onClick={cancelEdit}
+                className="mx-auto mt-3 block rounded-full px-4 py-2 text-[13px] font-semibold text-[var(--text-dim)] hover:text-white"
+              >
+                Cancelar edição
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function TeamSide({
+  label,
+  flagUrl,
+  align = "left",
+}: {
+  label: string;
+  flagUrl: string;
+  align?: "left" | "right";
+}) {
+  return (
+    <div className={cn("flex-1 flex flex-col items-center gap-3 min-w-0", align === "right" && "items-center")}>
+      {flagUrl
+        ? <img
+            src={flagUrl}
+            alt={label}
+            className="flag-img h-12 w-[72px] rounded-lg shadow-[0_4px_18px_rgba(0,0,0,0.45)]"
+            loading="lazy"
+          />
+        : <div className="h-12 w-[72px] rounded-lg bg-white/6" />
+      }
+      <p className="break-words px-1 text-center text-[15px] font-black leading-tight text-white">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+function RoundActionButton({
+  children,
+  disabled,
+  label,
+  onClick,
+  tone,
+}: {
+  children: React.ReactNode;
+  disabled: boolean;
+  label: string;
+  onClick: () => void;
+  tone: "neutral" | "gold";
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border transition-all active:scale-95",
+        disabled
+          ? "border-white/5 bg-white/3 text-white/12 cursor-not-allowed"
+          : tone === "gold"
+          ? "border-[var(--secondary)]/20 bg-[var(--secondary)]/10 text-[var(--secondary)] hover:bg-[var(--secondary)]/16"
+          : "border-white/10 bg-white/6 text-[var(--text-sub)] hover:text-white"
+      )}
+      aria-label={label}
+    >
+      {children}
+    </button>
   );
 }
 

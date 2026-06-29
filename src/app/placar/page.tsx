@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { RefreshCw } from "lucide-react";
+import { Award, RefreshCw } from "lucide-react";
 import AppShell from "@/components/layout/AppShell";
 import MobileHeader from "@/components/layout/MobileHeader";
 import type { UserScore } from "@/lib/types";
@@ -18,9 +18,12 @@ const PODIUM_BG = [
   "bg-gradient-to-r from-[rgba(184,196,208,0.09)] to-transparent border-[rgba(184,196,208,0.20)]",
   "bg-gradient-to-r from-[rgba(205,139,74,0.09)] to-transparent border-[rgba(205,139,74,0.20)]",
 ];
-const MEDALS = ["🥇", "🥈", "🥉"];
-const PRIZE_LABELS = ["R$ 300", "R$ 200", "R$ 100"];
-const PRIZE_COLORS = ["var(--gold)", "var(--silver)", "var(--bronze)"];
+const PRIZES = [
+  { place: "1", prize: "R$ 300", label: "Campeão", color: "var(--gold)" },
+  { place: "2", prize: "R$ 200", label: "Vice", color: "var(--silver)" },
+  { place: "3", prize: "R$ 100", label: "Terceiro", color: "var(--bronze)" },
+];
+const PRIZE_COLORS = PRIZES.map((p) => p.color);
 
 export default function PlacarPage() {
   const router = useRouter();
@@ -70,28 +73,36 @@ export default function PlacarPage() {
       <div className="max-w-lg mx-auto px-4 pt-5 pb-4">
 
         {/* Prize banner */}
-        <div className="mb-6 rounded-2xl overflow-hidden border border-white/8 bg-[var(--card)]">
-          <div className="flex items-stretch">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className={cn(
-                  "flex-1 flex flex-col items-center py-5 gap-2",
-                  i > 0 && "border-l border-white/7"
-                )}
-              >
-                <span className="text-[2rem] leading-none">{MEDALS[i]}</span>
-                <span className="font-black text-[1.05rem] leading-none" style={{ color: PRIZE_COLORS[i] }}>
-                  {PRIZE_LABELS[i]}
-                </span>
-                <span className="text-[var(--text-dim)] text-[11px]">{i + 1}º lugar</span>
+        <div className="mb-6 soft-panel overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-4 border-b border-white/7">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--secondary)]/12 text-[var(--secondary)]">
+              <Award size={21} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-white font-black leading-none">Premiação</p>
+              <p className="mt-1 text-[12px] text-[var(--text-sub)]">
+                Ranking final do bolão
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2 p-3">
+            {PRIZES.map(({ place, prize, label, color }) => (
+              <div key={place} className="rounded-2xl border border-white/7 bg-white/4 px-2 py-3 text-center">
+                <div
+                  className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-black"
+                  style={{ color, background: "rgba(255,255,255,0.06)" }}
+                >
+                  {place}º
+                </div>
+                <p className="text-[15px] font-black leading-none" style={{ color }}>{prize}</p>
+                <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white/28">{label}</p>
               </div>
             ))}
           </div>
-          <div className="px-5 py-3 border-t border-white/6">
-            <p className="text-[var(--text-dim)] text-[11px] text-center">
-              Vencedor: 10 pts · Exato: 20 pts · Campeão: +50 pts bônus
-            </p>
+          <div className="px-4 pb-4">
+            <div className="rounded-2xl border border-white/7 bg-black/16 px-3 py-2 text-center text-[11px] text-[var(--text-sub)]">
+              Vencedor 10 pts · Exato 20 pts · Campeão +50 pts
+            </div>
           </div>
         </div>
 
@@ -122,14 +133,19 @@ export default function PlacarPage() {
                   <Link
                     href={`/perfil/${score.user.id}`}
                     className={cn(
-                      "flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all active:scale-[0.98]",
+                      "flex items-center gap-3 px-4 py-4 rounded-2xl border transition-all active:scale-[0.98]",
                       cardClass
                     )}
                   >
                     {/* Rank */}
-                    <div className="w-7 text-center flex-shrink-0">
+                    <div className="w-8 text-center flex-shrink-0">
                       {isTop3
-                        ? <span className="text-[1.4rem]">{MEDALS[idx]}</span>
+                        ? <span
+                            className="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-[12px] font-black"
+                            style={{ color: PRIZE_COLORS[idx], background: "rgba(255,255,255,0.06)" }}
+                          >
+                            {idx + 1}º
+                          </span>
                         : <span className="text-[var(--text-dim)] text-sm font-black">{idx + 1}</span>
                       }
                     </div>
@@ -179,9 +195,9 @@ export default function PlacarPage() {
                     </div>
 
                     {/* Points */}
-                    <div className="text-right flex-shrink-0">
+                    <div className="min-w-[4.6rem] flex-shrink-0 rounded-2xl bg-black/18 px-3 py-2 text-right">
                       <div
-                        className="text-[1.7rem] font-black leading-none"
+                        className="text-[1.55rem] font-black leading-none tabular-nums"
                         style={{ color: isTop3 ? PRIZE_COLORS[idx] : isMe ? "var(--primary)" : "white" }}
                       >
                         {score.totalPoints}

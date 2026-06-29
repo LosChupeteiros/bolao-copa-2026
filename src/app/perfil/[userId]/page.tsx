@@ -19,7 +19,7 @@ interface UserScoreData {
 
 const TAB_LABELS: Record<Round, string> = {
   r16: "2ª Fase", oitavas: "Oitavas", quartas: "Quartas",
-  semi: "Semis", terceiro: "3° Lugar", final: "Final",
+  semi: "Semis", terceiro: "3º Lugar", final: "Final",
 };
 
 export default function PerfilPage() {
@@ -145,25 +145,30 @@ export default function PerfilPage() {
         )}
 
         {/* Round tabs */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1 mb-4">
+        <div className="-mx-4 mb-5 overflow-x-auto px-4 pb-1 scrollbar-hide">
+          <div className="inline-flex min-w-full gap-1.5 rounded-2xl border border-white/7 bg-black/18 p-1.5">
           {ROUND_ORDER.map((round) => {
             const hasBets = bets.some((b) => MATCHES.find((m) => m.id === b.matchId && m.round === round));
             const active = activeRound === round;
             return (
               <button key={round} onClick={() => setActiveRound(round)}
                 className={cn(
-                  "flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-black whitespace-nowrap transition-all",
+                  "relative flex-shrink-0 rounded-xl px-3.5 py-2.5 text-[11px] font-black whitespace-nowrap transition-all",
                   active
-                    ? "bg-[var(--primary)] text-white shadow-[0_4px_12px_rgba(0,181,69,0.35)]"
+                    ? "bg-[var(--primary)] text-white shadow-[0_8px_20px_rgba(22,184,98,0.24)]"
                     : hasBets
-                    ? "bg-white/5 text-[var(--text-sub)] border border-white/10"
-                    : "bg-white/3 text-[var(--text-dim)] border border-white/5"
+                    ? "text-[var(--text-sub)] hover:bg-white/6"
+                    : "text-[var(--text-dim)] hover:bg-white/4"
                 )}
               >
                 {TAB_LABELS[round]}
+                {hasBets && !active && (
+                  <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[var(--secondary)]/80" />
+                )}
               </button>
             );
           })}
+          </div>
         </div>
 
         {/* Match cards */}

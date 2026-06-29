@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Camera, UserPlus, Lock, User, X, Trophy } from "lucide-react";
+import { UserPlus, Lock, User, X, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
@@ -50,10 +50,6 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!photo) {
-      setError("Adicione uma foto para o pessoal te reconhecer.");
-      return;
-    }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
@@ -91,7 +87,7 @@ export default function RegisterPage() {
             </div>
             <h1 className="text-[2rem] font-black leading-[1.03] text-white">Crie sua conta</h1>
             <p className="mt-2 text-sm leading-6 text-[var(--text-sub)]">
-              Escolha uma foto e um apelido para entrar na disputa.
+              Escolha seu nome. A foto é opcional.
             </p>
           </section>
 
@@ -104,21 +100,23 @@ export default function RegisterPage() {
                   "relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 transition-all",
                   photoPreview
                     ? "border-[var(--primary)]/55"
-                    : "border-dashed border-white/18 bg-white/5 text-white/35"
+                    : "border-white/12 bg-gradient-to-br from-[var(--primary)]/22 to-[var(--accent)]/20 text-white"
                 )}
               >
                 {photoPreview ? (
                   <img src={photoPreview} alt="Foto" className="h-full w-full object-cover" />
                 ) : (
-                  <Camera size={26} />
+                  <span className="text-2xl font-black">
+                    {(displayName.trim()[0] || name[0] || "?").toUpperCase()}
+                  </span>
                 )}
               </button>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-black text-white">
-                  {photoPreview ? "Foto escolhida" : "Foto obrigatória"}
+                  {photoPreview ? "Foto escolhida" : "Avatar com inicial"}
                 </p>
                 <p className="mt-1 text-xs leading-5 text-[var(--text-sub)]">
-                  {photoPreview ? "Toque para trocar." : "Ajuda o pessoal a reconhecer você no placar."}
+                  {photoPreview ? "Toque para trocar ou remova para usar a inicial." : "Toque se quiser adicionar uma foto."}
                 </p>
               </div>
               {photoPreview && (

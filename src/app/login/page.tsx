@@ -38,68 +38,68 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-copa">
       <div className="color-strip" />
-      <div className="mx-auto flex min-h-[calc(100dvh-3px)] w-full max-w-md flex-col px-5 pb-7 pt-8">
-        <div className="flex flex-1 flex-col justify-center gap-7">
+      <div className="mx-auto flex min-h-[calc(100dvh-3px)] w-full max-w-md flex-col px-5 pb-7 pt-7">
+        <div className="flex flex-1 flex-col justify-center gap-6">
           <section>
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/12 text-[var(--primary)] shadow-[0_12px_36px_rgba(22,184,98,0.22)]">
-                <Trophy size={30} strokeWidth={2.3} />
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/12 text-[var(--primary)] shadow-[0_12px_36px_rgba(22,184,98,0.22)]">
+                <Trophy size={28} strokeWidth={2.3} />
               </div>
               <div>
-                <p className="text-2xl font-black leading-none text-white">Bolão Copa</p>
-                <p className="mt-1 text-2xl font-black leading-none text-[var(--secondary)]">2026</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--secondary)]">Fase eliminatória</p>
+                <p className="mt-1 text-2xl font-black leading-none text-white">Bolão Copa 2026</p>
               </div>
             </div>
-            <h1 className="text-[2.15rem] font-black leading-[1.02] text-white">
-              Entre no seu palpite
+            <h1 className="text-[2.25rem] font-black leading-[1.02] text-white">
+              Entre e faça seus palpites
             </h1>
-            <p className="mt-3 max-w-[19rem] text-sm leading-6 text-[var(--text-sub)]">
+            <p className="mt-3 max-w-[21rem] text-[15px] leading-6 text-[var(--text-sub)]">
               Acompanhe a família no mata-mata e veja quem dispara no placar.
             </p>
           </section>
 
-          <form onSubmit={handleSubmit} className="soft-panel flex flex-col gap-3.5 p-4">
-            <div className="relative">
-              <User
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35"
-                size={18}
-              />
+          <form onSubmit={handleSubmit} className="soft-panel flex flex-col gap-4 p-4">
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 px-1 text-[12px] font-black uppercase tracking-[0.10em] text-white/45">
+                <User size={15} /> Apelido
+              </span>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value.replace(/\s/g, ""))}
-                placeholder="Apelido"
+                placeholder="Digite seu apelido"
                 autoCapitalize="none"
                 autoCorrect="off"
                 autoComplete="username"
-                className="mobile-field pl-12 pr-4"
+                className="mobile-field min-h-16 px-4 text-[17px]"
                 required
               />
-            </div>
+            </label>
 
-            <div className="relative">
-              <Lock
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35"
-                size={18}
-              />
-              <input
-                type={showPass ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Senha"
-                autoComplete="current-password"
-                className="mobile-field pl-12 pr-14"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                className="icon-button absolute right-2 top-1/2 -translate-y-1/2"
-                aria-label={showPass ? "Ocultar senha" : "Mostrar senha"}
-              >
-                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 px-1 text-[12px] font-black uppercase tracking-[0.10em] text-white/45">
+                <Lock size={15} /> Senha
+              </span>
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Digite sua senha"
+                  autoComplete="current-password"
+                  className="mobile-field min-h-16 px-4 pr-16 text-[17px]"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="icon-button absolute right-2 top-1/2 -translate-y-1/2"
+                  aria-label={showPass ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </label>
 
             {error && (
               <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3">
