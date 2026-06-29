@@ -133,7 +133,7 @@ export default function RegisterPage() {
               type="text"
               value={displayName}
               onChange={(e) => handleDisplayNameChange(e.target.value)}
-              placeholder="Nome completo"
+              placeholder="Primeiro nome"
               className="w-full bg-white/7 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-[15px] placeholder-white/30 focus:outline-none focus:border-[var(--primary)]/60 focus:bg-white/9 transition-all"
               required
             />
