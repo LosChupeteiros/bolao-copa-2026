@@ -145,15 +145,15 @@ export default function PerfilPage() {
         )}
 
         {/* Round tabs */}
-        <div className="-mx-4 mb-5 overflow-x-auto px-4 pb-1 scrollbar-hide">
-          <div className="inline-flex min-w-full gap-2 rounded-2xl border border-white/7 bg-black/18 p-2">
+        <div className="mb-5 rounded-2xl border border-white/7 bg-black/18 p-2">
+          <div className="grid grid-cols-2 gap-2">
           {ROUND_ORDER.map((round) => {
             const hasBets = bets.some((b) => MATCHES.find((m) => m.id === b.matchId && m.round === round));
             const active = activeRound === round;
             return (
               <button key={round} onClick={() => setActiveRound(round)}
                 className={cn(
-                  "relative flex-shrink-0 rounded-xl px-[1.125rem] py-3 text-[12px] font-black whitespace-nowrap transition-all",
+                  "relative min-h-12 rounded-xl px-4 py-3 text-[13px] font-black transition-all",
                   active
                     ? "bg-[var(--primary)] text-white shadow-[0_8px_20px_rgba(22,184,98,0.24)]"
                     : hasBets

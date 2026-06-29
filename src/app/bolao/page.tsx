@@ -328,7 +328,7 @@ export default function BolaoPage() {
             animate="center"
             exit="exit"
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="absolute inset-0 overflow-y-auto"
+            className="absolute inset-0 overflow-hidden"
           >
             <BetCard
               match={currentMatch}

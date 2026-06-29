@@ -135,7 +135,7 @@ export default function PlacarPage() {
                   <Link
                     href={`/perfil/${score.user.id}`}
                     className={cn(
-                      "flex items-center gap-3 rounded-2xl border px-4 py-4 pr-5 transition-all active:scale-[0.98]",
+                      "grid grid-cols-[2rem_3rem_minmax(0,1fr)_4.5rem] items-center gap-3 overflow-hidden rounded-2xl border px-4 py-4 pr-6 transition-all active:scale-[0.98]",
                       cardClass
                     )}
                   >
@@ -197,14 +197,13 @@ export default function PlacarPage() {
                     </div>
 
                     {/* Points */}
-                    <div className="ml-1 min-w-[5rem] flex-shrink-0 rounded-2xl bg-black/18 px-4 py-2.5 text-right">
+                    <div className="justify-self-end rounded-2xl bg-black/18 px-3 py-2 text-center">
                       <div
-                        className="text-[1.45rem] font-black leading-none tabular-nums"
+                        className="whitespace-nowrap text-[14px] font-black leading-none tabular-nums"
                         style={{ color: isTop3 ? PRIZE_COLORS[idx] : isMe ? "var(--primary)" : "white" }}
                       >
-                        {score.totalPoints}
+                        {score.totalPoints} pts
                       </div>
-                      <div className="text-[var(--text-dim)] text-[10px] mt-0.5">pts</div>
                     </div>
                   </Link>
 
